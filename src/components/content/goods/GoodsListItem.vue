@@ -1,6 +1,6 @@
 <template>
   <div class="goods-item">
-    <img :src="goodsItem.show.img" alt="">
+    <img :src="goodsItem.show.img" alt="" @load="imageLoad">
     <div class="goods-info">
       <p>{{goodsItem.title}}</p>
       <span class="price">{{goodsItem.price}}</span>
@@ -18,7 +18,13 @@ export default {
         return {}
       }
     }
-  }
+  },
+  methods: {
+    imageLoad() {
+      // $bus是没有的，需自己加main.js中利用prototype
+      this.$bus.$emit('itemImageLoad')
+    }
+  },
 }
 </script>
 
