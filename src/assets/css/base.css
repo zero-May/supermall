@@ -3,7 +3,7 @@
 /* :root -> 获取根元素html */
 :root {
   --color-text: #666;
-  --color-hight-text: #ff5777;
+  --color-high-text: #ff5777;
   --color-tint: #ff8189;
   --color-background: #fff;
   --font-size: 14px;
@@ -87,6 +87,11 @@ td {
   font-size: 100%;
   vertical-align: baseline;
   background: transparent;
+}
+
+a {
+  text-decoration: none;
+  color: #666;
 }
 
 body {
