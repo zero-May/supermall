@@ -3,6 +3,13 @@
     <nav-bar class="home-nav">
       <div slot="center">购物街</div>
     </nav-bar>
+    <tab-control 
+      :titles="['流行','新款','精选']" 
+      @tabClick="tabClick" 
+      ref="tabControl1"
+      class="tab-control"
+      v-show="isTabFixed"
+      ></tab-control>
     <scroll
       class="content"
       ref="scroll"
@@ -11,10 +18,15 @@
       :pull-up-load="true"
       @pullingUp="loadMore"
     >
-      <home-swiper :banners="banners"></home-swiper>
+      <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad"></home-swiper>
       <recommend-view :recommends="recommends"></recommend-view>
       <feature-view></feature-view>
-      <tab-control class="tab-control" :titles="['流行','新款','精选']" @tabClick="tabClick"></tab-control>
+      <!-- :class="{fixed: isTabFixed}" -->
+      <tab-control 
+      :titles="['流行','新款','精选']" 
+      @tabClick="tabClick" 
+      ref="tabControl2"
+      ></tab-control>
       <!-- Home中请求到goods数据，GoodsList中拿到某一类型的数据list:goods,在GoodsListItem中遍历list:goods中的每一小项 -->
       <goods-list :goods="showGoods"></goods-list>
     </scroll>
@@ -65,7 +77,9 @@ export default {
         sell: { page: 0, list: [] }
       },
       currentType: "pop",
-      isShowBackTop: true
+      isShowBackTop: true,
+      tabOffsetTop: 0,
+      isTabFixed: false
     };
   },
   computed: {
@@ -85,12 +99,12 @@ export default {
     this.getHomeGoods("sell");
   },
   mounted() {
-    // 监听GoodsListItem中图片加载完成
+    // 1.GoodsListItem中图片加载完成的事件监听
     // 图片监听执行次数过多，可以用防抖函数来解决
     const refresh = debounce(this.$refs.scroll.refresh,50)
     this.$bus.$on("itemImageLoad", () => {
       refresh()
-    });
+    });    
   },
   methods: {
     // 事件监听相关的方法
@@ -106,6 +120,9 @@ export default {
           this.currentType = "sell";
           break;
       }
+      // 两个tabControl点击的统一
+      this.$refs.tabControl1.currentIndex = index;
+      this.$refs.tabControl2.currentIndex = index;
     },
     // 返回顶部
     backClick() {
@@ -113,13 +130,22 @@ export default {
       this.$refs.scroll.scrollTo(0, 0);
     },
     contentScroll(position) {
+      // 1.判断BackTop是否显示
       this.isShowBackTop = -position.y > 1000;
-    },
 
+      // 2.决定tabControl是否吸顶(position: fixed)
+      this.isTabFixed = (-position.y) > this.tabOffsetTop
+    },
     // 上拉加载更多（默认加载一次，需完成加载更多，再加载）
     loadMore() {
       // console.log('上拉加载更多');
       this.getHomeGoods(this.currentType)
+    },
+    // 获取tabControl的offsetTop
+    // 所有的组件都有一个属性$el: 用于获取组件中的元素
+    swiperImageLoad() {
+      // console.log(this.$refs.tabControl.$el.offsetTop);
+      this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop 
     },
 
     // 网络请求相关的方法
@@ -151,29 +177,41 @@ export default {
 
 <style scoped>
 #home {
-  padding-top: 44px;
+  /* padding-top: 44px; */
   height: 100vh;
   position: relative;
 }
 .home-nav {
   background-color: var(--color-tint);
   color: #fff;
-  position: fixed;
+  /* 在浏览器原生滚动时。为了让导航不跟随一起滚动，使用Better-Scroll不需要fixed */
+  /* position: fixed;
   left: 0;
   right: 0;
-  top: 0;
-  z-index: 9;
-}
-.tab-control {
-  position: sticky;
-  top: 44px;
+  top: 0; 
+  z-index: 9; */
 }
 .content {
-  height: 300px;
+  overflow: hidden;
   position: absolute;
   top: 44px;
   bottom: 49px;
   left: 0;
   right: 0;
 }
+.tab-control {
+  position: relative;
+  z-index: 9;
+}
+/* .tab-control {
+  position: sticky;
+  top: 44px;
+} */
+/* Better-Scroll中无法使用 tab-control吸顶*/
+/* .fixed {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 44px;
+} */
 </style>
