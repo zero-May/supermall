@@ -1,5 +1,5 @@
 <template>
-  <div class="goods-item">
+  <div class="goods-item" @click="itemClick">
     <img :src="goodsItem.show.img" alt="" @load="imageLoad">
     <div class="goods-info">
       <p>{{goodsItem.title}}</p>
@@ -23,6 +23,11 @@ export default {
     imageLoad() {
       // $bus是没有的，需自己加main.js中利用prototype
       this.$bus.$emit('itemImageLoad')
+    },
+    // 跳转的详情页
+    itemClick() {
+      this.$router.push('/detail/' + this.goodsItem.iid)
+      // console.log(this.goodsItem);
     }
   },
 }
