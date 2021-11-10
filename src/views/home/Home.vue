@@ -52,6 +52,7 @@ import FeatureView from "./childComps/FeatureView";
 // 导入方法
 import { getHomeMultidata, getHomeGoods } from "network/home";
 import {debounce} from 'common/utils'
+import {itemListenerMixin} from 'common/mixin'
 
 export default {
   name: "Home",
@@ -65,6 +66,7 @@ export default {
     Scroll,
     BackTop
   },
+  mixins: [itemListenerMixin],
   data() {
     return {
       // result: null
@@ -80,7 +82,9 @@ export default {
       isShowBackTop: true,
       tabOffsetTop: 0,
       isTabFixed: false,
-      saveY: 0
+      saveY: 0,
+      // 也可以使用混入
+      // itemImgListener: null
     };
   },
   computed: {
@@ -96,7 +100,11 @@ export default {
     this.$refs.scroll.refresh()
   },
   deactivated() {
+    // 1.保存Y值
     this.saveY = this.$refs.scroll.getScrollY()
+
+    // 2.取消全局事件的监听
+    this.$bus.$off('itemImgLoad', this.itemImgListener)
   },
   created() {
     // 1.请求多个数据(banners和recommends)
@@ -112,10 +120,12 @@ export default {
   mounted() {
     // 1.GoodsListItem中图片加载完成的事件监听
     // 图片监听执行次数过多，可以用防抖函数来解决
-    const refresh = debounce(this.$refs.scroll.refresh,50)
-    this.$bus.$on("itemImageLoad", () => {
-      refresh()
-    });    
+    // 使用混入mixin
+    // const refresh = debounce(this.$refs.scroll.refresh,50)
+    // this.itemImgListener = () => {
+    //   refresh()
+    // }
+    // this.$bus.$on("itemImgLoad", this.itemImgListener);    
   },
   methods: {
     // 事件监听相关的方法

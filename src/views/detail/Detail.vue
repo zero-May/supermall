@@ -5,7 +5,8 @@
       <detail-swiper :top-images="topImages"></detail-swiper>
       <detail-base-info :goodsInfo="goodsInfo"></detail-base-info>
       <detail-shop-info :shopInfo="shopInfo"></detail-shop-info>
-      <detail-info :detailInfo="detailInfo" @imageLoad="imageLoad"></detail-info>
+      <!-- <detail-info :detailInfo="detailInfo" @imageLoad="imageLoad"></detail-info> -->
+       <detail-info :detailInfo="detailInfo"></detail-info>
       <detail-params :paramsInfo="paramsInfo"></detail-params>
       <detail-comment :commentInfo="commentInfo"></detail-comment>
       <goods-list :goods="recommends"></goods-list>
@@ -26,6 +27,7 @@ import GoodsList from "components/content/goods/GoodsList";
 import Scroll from 'components/common/scroll/Scroll'
 
 import {getDetail, GoodsInfo, getRecommend, ShopInfo, ParamsInfo} from 'network/detail'
+import {itemListenerMixin} from 'common/mixin'
 
 export default {
   name: 'Detail',
@@ -40,6 +42,7 @@ export default {
     GoodsList,
     Scroll
   },
+  mixins: [itemListenerMixin],
   data() {
     return {
       iid: null,
@@ -49,7 +52,9 @@ export default {
       detailInfo: {},
       paramsInfo: {},
       commentInfo: {},
-      recommends: []
+      recommends: [],
+      // 也可以使用混入
+      // itemImgListener: null 
     }
   },
   created() {
@@ -90,14 +95,18 @@ export default {
 
     // 3.请求详情数据
     getRecommend().then(res => {
-      console.log(res);
+      // console.log(res);
       this.recommends = res.data.list
     })
   },
-  methods: {
-    imageLoad() {
-      this.$refs.scroll.refresh()
-    }
+  // methods: {
+  //   imageLoad() {
+  //     this.$refs.scroll.refresh()
+  //   }
+  // },
+  destroyed() {
+    // 取消全局事件的监听
+    this.$bus.$off('itemImgLoad', this.itemImgListener)
   },
 }
 </script>

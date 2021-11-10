@@ -27,7 +27,7 @@ export default {
   methods: {
     imageLoad() {
       // $bus是没有的，需自己加main.js中利用prototype
-      this.$bus.$emit('itemImageLoad')
+      this.$bus.$emit('itemImgLoad')
     },
     // 跳转的详情页
     itemClick() {
