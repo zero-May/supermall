@@ -7,6 +7,7 @@
       <detail-shop-info :shopInfo="shopInfo"></detail-shop-info>
       <detail-info :detailInfo="detailInfo" @imageLoad="imageLoad"></detail-info>
       <detail-params :paramsInfo="paramsInfo"></detail-params>
+      <detail-comment :commentInfo="commentInfo"></detail-comment>
     </scroll>
   </div>
 </template>
@@ -18,6 +19,7 @@ import DetailBaseInfo from './childComps/DetailBaseInfo'
 import DetailShopInfo from './childComps/DetailShopInfo'
 import DetailInfo from './childComps/DetailInfo'
 import DetailParams from './childComps/DetailParams'
+import DetailComment from './childComps/DetailComment'
 
 import Scroll from 'components/common/scroll/Scroll'
 
@@ -32,6 +34,7 @@ export default {
     DetailShopInfo,
     DetailInfo,
     DetailParams,
+    DetailComment,
     Scroll
   },
   data() {
@@ -41,7 +44,8 @@ export default {
       goodsInfo: {},
       shopInfo: {},
       detailInfo: {},
-      paramsInfo: {}
+      paramsInfo: {},
+      commentInfo: {}
     }
   },
   created() {
@@ -51,23 +55,33 @@ export default {
     // 2.根据iid请求详情数据
     getDetail(this.iid).then(res => {
       console.log(res);
-      // 1.获取顶部的图片轮播图数据
+      // 1.获取数据
       const data = res.result
+
+      // 2.获取顶部的图片轮播图数据
       this.topImages = data.itemInfo.topImages
 
-      // 2.获取商品信息
+      // 3.获取商品信息
       this.goodsInfo = new GoodsInfo(data.itemInfo, data.columns, data.shopInfo.services)
       // console.log(this.goodsInfo);
       
-      // 3.获取店铺信息
+      // 4.获取店铺信息
       this.shopInfo = new ShopInfo(data.shopInfo)
       // console.log(this.shopInfo);
       
-      // 4.保存商品的详情数据
+      // 5.获取商品的详情数据
       this.detailInfo = data.detailInfo
 
-      // 5.获取参数信息
+      // 6.获取参数信息
       this.paramsInfo = new ParamsInfo(data.itemParams.info, data.itemParams.rule)
+
+      // 7.获取评论信息
+      // 如果有评论信息
+      if(data.rate.cRate !== 0){
+        // this.commentInfo = data.rate.list[0]
+        this.commentInfo = data.rate
+        console.log(this.commentInfo);
+      }
     })
   },
   methods: {
