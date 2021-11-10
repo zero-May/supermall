@@ -8,6 +8,7 @@
       <detail-info :detailInfo="detailInfo" @imageLoad="imageLoad"></detail-info>
       <detail-params :paramsInfo="paramsInfo"></detail-params>
       <detail-comment :commentInfo="commentInfo"></detail-comment>
+      <goods-list :goods="recommends"></goods-list>
     </scroll>
   </div>
 </template>
@@ -20,10 +21,11 @@ import DetailShopInfo from './childComps/DetailShopInfo'
 import DetailInfo from './childComps/DetailInfo'
 import DetailParams from './childComps/DetailParams'
 import DetailComment from './childComps/DetailComment'
+import GoodsList from "components/content/goods/GoodsList";
 
 import Scroll from 'components/common/scroll/Scroll'
 
-import {getDetail, GoodsInfo, ShopInfo, ParamsInfo} from 'network/detail'
+import {getDetail, GoodsInfo, getRecommend, ShopInfo, ParamsInfo} from 'network/detail'
 
 export default {
   name: 'Detail',
@@ -35,6 +37,7 @@ export default {
     DetailInfo,
     DetailParams,
     DetailComment,
+    GoodsList,
     Scroll
   },
   data() {
@@ -45,7 +48,8 @@ export default {
       shopInfo: {},
       detailInfo: {},
       paramsInfo: {},
-      commentInfo: {}
+      commentInfo: {},
+      recommends: []
     }
   },
   created() {
@@ -54,7 +58,7 @@ export default {
 
     // 2.根据iid请求详情数据
     getDetail(this.iid).then(res => {
-      console.log(res);
+      // console.log(res);
       // 1.获取数据
       const data = res.result
 
@@ -80,8 +84,14 @@ export default {
       if(data.rate.cRate !== 0){
         // this.commentInfo = data.rate.list[0]
         this.commentInfo = data.rate
-        console.log(this.commentInfo);
+        // console.log(this.commentInfo);
       }
+    })
+
+    // 3.请求详情数据
+    getRecommend().then(res => {
+      console.log(res);
+      this.recommends = res.data.list
     })
   },
   methods: {
