@@ -10,6 +10,9 @@
       <detail-comment ref="comment" :commentInfo="commentInfo"></detail-comment>
       <goods-list ref="recommend" :goods="recommends"></goods-list>
     </scroll>
+    <detail-bottom></detail-bottom>
+    <!-- 返回顶部 （mixin） -->
+    <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
   </div>
 </template>
 
@@ -22,6 +25,7 @@ import DetailInfo from "./childComps/DetailInfo";
 import DetailParams from "./childComps/DetailParams";
 import DetailComment from "./childComps/DetailComment";
 import GoodsList from "components/content/goods/GoodsList";
+import DetailBottom from './childComps/DetailBottom'
 
 import Scroll from "components/common/scroll/Scroll";
 
@@ -32,7 +36,7 @@ import {
   ShopInfo,
   ParamsInfo
 } from "network/detail";
-import { itemListenerMixin } from "common/mixin";
+import { itemListenerMixin, backTopMixIn } from "common/mixin";
 import {debounce} from 'common/utils'
 
 export default {
@@ -46,9 +50,11 @@ export default {
     DetailParams,
     DetailComment,
     GoodsList,
-    Scroll
+    Scroll,
+    DetailBottom,
   },
-  mixins: [itemListenerMixin],
+  // 图片监听混入和回到顶部混入
+  mixins: [itemListenerMixin, backTopMixIn],
   data() {
     return {
       iid: null,
@@ -193,6 +199,10 @@ export default {
           this.$refs.nav.currentIndex = this.currentIndex
         }
       }
+
+      // 3.是否显示回到顶部（这里回到顶部用了混入）
+      // 混入时，methods中函数内部不能再拆分，只能是一个完整的函数，不会合并，生命周期函数可以合并
+      this.isShowBackTop = -position.y > 1000;
     }
   },
   destroyed() {
