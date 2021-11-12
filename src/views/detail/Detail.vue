@@ -10,7 +10,7 @@
       <detail-comment ref="comment" :commentInfo="commentInfo"></detail-comment>
       <goods-list ref="recommend" :goods="recommends"></goods-list>
     </scroll>
-    <detail-bottom></detail-bottom>
+    <detail-bottom @addCart="addCart"></detail-bottom>
     <!-- 返回顶部 （mixin） -->
     <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
   </div>
@@ -203,6 +203,19 @@ export default {
       // 3.是否显示回到顶部（这里回到顶部用了混入）
       // 混入时，methods中函数内部不能再拆分，只能是一个完整的函数，不会合并，生命周期函数可以合并
       this.isShowBackTop = -position.y > 1000;
+    },
+    addCart() {
+      // 1.获取购物车需要展示的信息
+      const cartGoods = {}
+      cartGoods.iamge = this.topImages[0]
+      cartGoods.title = this.goodsInfo.title
+      cartGoods.desc = this.goodsInfo.desc
+      cartGoods.price = this.goodsInfo.realPrice
+      cartGoods.iid = this.iid
+
+      // 2.将商品加入购物车
+      // this.$store.cartList.push(cartGoods)
+      this.$store.dispatch('addCart', cartGoods)
     }
   },
   destroyed() {

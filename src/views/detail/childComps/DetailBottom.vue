@@ -20,8 +20,7 @@
       </span>
     </div>
     <div class="right">
-      <span class="cart">加入购物车</span>
-      <!-- <span class="cart" @click="addCart">加入购物车</span> -->
+      <span class="cart" @click="addCart">加入购物车</span>
       <span class="buy">购买(未开发)</span>
       <!-- <span class="buy" @click="buyNow">购买(未开发)</span> -->
     </div>
@@ -30,7 +29,12 @@
 
 <script>
 export default {
-  name: 'DetailBottom'
+  name: 'DetailBottom',
+  methods: {
+    addCart() {
+      this.$emit('addCart')
+    }
+  },
 }
 </script>
 
@@ -91,7 +95,7 @@ export default {
 .right span {
   display: inline-block;
   height: 55px;
-  font-size: 17px;
+  font-size: 16px;
   line-height: 55px;
 }
 .right span.cart {

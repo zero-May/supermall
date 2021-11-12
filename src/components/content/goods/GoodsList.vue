@@ -1,7 +1,10 @@
 <template>
   <div class="goods">
     <!-- goods中遍历出来的item是一个个小对象，需要把每个item给GoodsListItem使用 -->
-    <goods-list-item v-for="item in goods" :goods-item="item"></goods-list-item>
+    <goods-list-item 
+    v-for="(item, index) in goods" 
+    :key="index" 
+    :goods-item="item"></goods-list-item>
   </div>
 </template>
 <script>
